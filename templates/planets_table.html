@@ -31,14 +31,17 @@
     {% for planet in data.results %}
     <tr>
       <td>{{ planet.name }}</td>
-      <td>{{ planet.diameter }} {% if planet.diameter != 'unknown' %}km{% endif %}</td>
+      <td>{{ planet.diameter }}</td>
       <td>{{ planet.climate }}</td>
       <td>{{ planet.terrain }}</td>
       <td>{{ planet.surface_water }} {% if planet.surface_water != 'unknown' %}%{% endif %}</td>
       <td>{{ planet.population }}</td>
       <td>
         {% if planet.residents %}
-        <button class="btn btn-default btn-block" type="button">
+        <button
+          class="btn btn-default btn-block residents-modal-activator"
+          type="button"
+          data-purl="{{ planet.url }}">
           {{- planet.residents|length -}}
           {%- if planet.residents|length > 1 %}
           residents
