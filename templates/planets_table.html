@@ -1,0 +1,56 @@
+{% if parent_template %}
+  {% extends parent_template %}
+{% endif %}
+{% block table %}
+  <button
+    id="prev-page"
+    type="button"
+    class="btn btn-primary"
+    data-url="{{ data.previous }}"
+    {% if data.previous %}{% else %}disabled{% endif %}>
+    Previous page
+  </button>
+  <button
+    id="next-page"
+    type="button"
+    class="btn btn-primary"
+    data-url="{{ data.next }}"
+    {% if data.next %}{% else %}disabled{% endif %}>
+    Next page
+  </button>
+  <table class="table table-bordered table-striped table-responsive col-xs-12">
+    <tr>
+      <th>Name</th>
+      <th>Diameter</th>
+      <th>Climate</th>
+      <th>Terrain</th>
+      <th>Water</th>
+      <th>Population</th>
+      <th>Residents</th>
+    </tr>
+    {% for planet in data.results %}
+    <tr>
+      <td>{{ planet.name }}</td>
+      <td>{{ planet.diameter }} {% if planet.diameter != 'unknown' %}km{% endif %}</td>
+      <td>{{ planet.climate }}</td>
+      <td>{{ planet.terrain }}</td>
+      <td>{{ planet.surface_water }} {% if planet.surface_water != 'unknown' %}%{% endif %}</td>
+      <td>{{ planet.population }}</td>
+      <td>
+        {% if planet.residents %}
+        <button class="btn btn-default btn-block" type="button">
+          {{- planet.residents|length -}}
+          {%- if planet.residents|length > 1 %}
+          residents
+          {%- else %}
+          resident
+          {%- endif -%}
+        </button>
+        {% else %}
+        No known residents
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+{% endblock %}
