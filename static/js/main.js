@@ -10,11 +10,15 @@ $(document).ready(function() {
 });
 
 function loadModalData(event) {
+    var button = $(this);
+    var oldText = button.html();
+    button.html('Loading...');
     var url = $(this).data('purl');
     $('#residents-modal .modal-content').load(`/get-modal-content?url=${url}`, function(){
         $('#residents-modal').modal('show');
         $('#residents-modal').css('opacity', '0');
         $('#residents-modal .modal-dialog').css('transform', 'translate(0,-25%)');
+        button.html(oldText);
     });
 }
 
