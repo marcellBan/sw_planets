@@ -13,7 +13,7 @@ function loadModalData(event) {
     var button = $(this);
     var oldText = button.html();
     button.html('Loading...');
-    var url = $(this).data('purl');
+    var url = button.data('purl');
     $('#residents-modal .modal-content').load(`/get-modal-content?url=${url}`, function(){
         $('#residents-modal').modal('show');
         $('#residents-modal').css('opacity', '0');
@@ -28,7 +28,7 @@ function pageButtonClick() {
 }
 
 function getTable(url) {
-    $('#table-wrapper').load(`/get-table?url=${url}`, function(){
+    $('#content-wrapper').load(`/get-table?url=${url}`, function(){
         $('#prev-page').click(pageButtonClick);
         $('#next-page').click(pageButtonClick);
         $('.residents-modal-activator').click(loadModalData);

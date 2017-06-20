@@ -1,8 +1,10 @@
+import os
 import requests
 
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session, url_for, redirect
 
 app = Flask(__name__)
+app.secret_key = os.urandom(24)
 
 
 def format_planet_data(planet_data):
@@ -48,6 +50,35 @@ def get_modal_content():
         residents.append(requests.get(resident).json())
     data = construct_modal_data(planet, residents)
     return render_template('residents_modal.html', data=data)
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if session.get('user') is not None:
+        if request.method == 'GET':
+            return render_template('login.html')
+        else:
+            pass  # TODO: handle login
+    else:
+        return redirect(url_for('index'))
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if session.get('user') is not None:
+        if request.method == 'GET':
+            return render_template('register.html')
+        else:
+            pass  # TODO: handle register
+    else:
+        return redirect(url_for('index'))
+
+
+@app.route('/logout')
+def logout():
+    if session.get('user') is not None:
+        session.pop('user', None)
+    return redirect(url_for('index'))
 
 if __name__ == '__main__':
     app.run()
