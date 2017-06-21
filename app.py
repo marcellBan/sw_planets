@@ -1,7 +1,10 @@
 import os
 import requests
 
-from flask import Flask, render_template, request, session, url_for, redirect
+from flask import Flask, render_template, request, session, url_for, redirect, flash, abort
+from werkzeug.security import generate_password_hash, check_password_hash
+
+import db_access
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
@@ -54,24 +57,70 @@ def get_modal_content():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if session.get('user') is not None:
+    success = False
+    if session.get('user') is None:
         if request.method == 'GET':
             return render_template('login.html')
         else:
-            pass  # TODO: handle login
+            try:
+                user = db_access.get_user(request.form.get('username'))
+                if user is None:
+                        flash('Wrong username!')
+                else:
+                    if check_password_hash(user.get('password'), request.form.get('password')):
+                        session['user'] = request.form.get('username')
+                        success = True
+                    else:
+                        flash('Wrong password!')
+            except (db_access.CredentialsMissingError, db_access.DatabaseError):
+                abort(500, 'A database error occured!')
     else:
+        flash('Already logged in!')
+        success = True
+    if success:
         return redirect(url_for('index'))
+    else:
+        return render_template('login.html')
 
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    if session.get('user') is not None:
+    success = False
+    if session.get('user') is None:
         if request.method == 'GET':
             return render_template('register.html')
         else:
-            pass  # TODO: handle register
+            try:
+                username = request.form.get('username')
+                password = generate_password_hash(request.form.get('password'))
+                user = db_access.get_user(username)
+                if user is None:
+                    if not check_password_hash(password, request.form.get('password_verify')):
+                        flash('Passwords do not match!')
+                    else:
+                        db_access.add_user(username, password)
+                        session['user'] = username
+                        success = True
+                else:
+                    flash('Username taken!')
+            except (db_access.CredentialsMissingError, db_access.DatabaseError):
+                abort(500, 'A database error occured!')
     else:
+        flash('Already logged in!')
+        success = True
+    if success:
         return redirect(url_for('index'))
+    else:
+        return render_template('register.html')
+
+
+@app.route('/check-user')
+def check_user():
+    try:
+        user = db_access.get_user(request.args.get('username'))
+        return str(user is not None)
+    except (db_access.CredentialsMissingError, db_access.DatabaseError):
+        return False
 
 
 @app.route('/logout')

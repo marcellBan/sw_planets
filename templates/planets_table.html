@@ -2,7 +2,7 @@
   {% extends parent_template %}
 {% endif %}
 {% if not parent_template %}
-<section class="row">
+  <section class="row">
 {% endif %}
 {% block nav_buttons %}
   <button
@@ -23,8 +23,8 @@
   </button>
 {% endblock %}
 {% if not parent_template %}
-</section>
-<section id="table-wrapper" class="row">
+  </section>
+  <section id="table-wrapper" class="row">
 {% endif %}
 {% block table %}
   <table class="table table-bordered table-striped table-responsive col-xs-12">
@@ -67,5 +67,5 @@
   </table>
 {% endblock %}
 {% if not parent_template %}
-</section>
+  </section>
 {% endif %}

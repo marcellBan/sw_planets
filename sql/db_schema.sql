@@ -4,7 +4,7 @@ DROP TABLE IF EXISTS users;
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     username VARCHAR(30) UNIQUE,
-    password CHAR(80)
+    password CHAR(93)
 );
 
 CREATE TABLE "planet-votes" (
