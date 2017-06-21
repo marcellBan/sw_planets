@@ -1,5 +1,6 @@
 import os
 import requests
+import json
 
 from flask import Flask, render_template, request, session, url_for, redirect, flash, abort
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -29,6 +30,12 @@ def construct_modal_data(planet, residents):
         if resident.get('mass') != 'unknown':
             resident['mass'] = '{} kg'.format(resident['mass'])
     return data
+
+
+def construct_statistics_data(data):
+    for planet in data:
+        url = 'http://swapi.co/api/planets/{}'.format(planet['planet_id'])
+        planet['planet_id'] = requests.get(url).json().get('name')
 
 
 @app.route('/')
@@ -140,7 +147,17 @@ def check_user():
         user = db_access.get_user(request.args.get('username'))
         return str(user is not None)
     except (db_access.CredentialsMissingError, db_access.DatabaseError):
-        return False
+        return str(False)
+
+
+@app.route('/get-statistics')
+def get_statistics():
+    try:
+        data = db_access.get_statistics()
+        construct_statistics_data(data)
+        return json.dumps(data)
+    except (db_access.CredentialsMissingError, db_access.DatabaseError):
+        return '', 500
 
 
 @app.route('/logout')

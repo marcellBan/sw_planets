@@ -11,6 +11,12 @@ $(document).ready(function() {
     } else {
         initTablePage();
     }
+    $('.statistics-modal-activator').click(showStatisticsModal);
+    $('#statistics-modal').on('shown.bs.modal', function() {
+        $('#statistics-modal .modal-body').height($('#statistics-modal table').height());
+        $(this).css('opacity', '1');
+        $('#statistics-modal .modal-dialog').css('transform', '');
+    });
     $('.flashed-message').slideDown(750).fadeIn(750);
     setTimeout(function() {
         $('.flashed-message').slideUp(750).fadeOut(750);
@@ -58,6 +64,50 @@ function attachTableListeners() {
     $('#next-page').click(pageButtonClick);
     $('.residents-modal-activator').click(loadModalData);
     $('.vote-btn').click(voteForPlanet);
+}
+
+function showStatisticsModal() {
+    var button = $(this);
+    var oldText = button.html();
+    button.html('Loading...');
+    $.ajax({
+        url: '/get-statistics',
+        success: function(response) {
+            var data = JSON.parse(response);
+            var tableBody = $('#statistics-modal table tbody');
+            var heading = generateHeading();
+            tableBody.empty().append(heading);
+            for (let planet of data) {
+                let row = generateRow(planet);
+                tableBody.append(row);
+            }
+            $('#statistics-modal').modal('show').css('opacity', '0');
+            $('#statistics-modal .modal-dialog').css('transform', 'translate(0,-25%)');
+            button.html(oldText);
+        }
+    });
+}
+
+function generateHeading() {
+    var heading = document.createElement('tr');
+    var nameHeading = document.createElement('th');
+    var votesHeading = document.createElement('th');
+    nameHeading.appendChild(document.createTextNode('Planet'));
+    votesHeading.appendChild(document.createTextNode('Votes'));
+    heading.appendChild(nameHeading);
+    heading.appendChild(votesHeading);
+    return heading;
+}
+
+function generateRow(planet) {
+    let row = document.createElement('tr');
+    let name = document.createElement('td');
+    let votes = document.createElement('td');
+    name.appendChild(document.createTextNode(planet[0]));
+    votes.appendChild(document.createTextNode(planet[1]));
+    row.appendChild(name);
+    row.appendChild(votes);
+    return row;
 }
 
 function voteForPlanet() {

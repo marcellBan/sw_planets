@@ -82,3 +82,18 @@ def add_vote(user_id, planet_id, cursor=None):
         print('No database cursor.', file=sys.stderr)
         raise psycopg2.DatabaseError()
     cursor.execute(query, [planet_id, user_id, datetime.datetime.now()])
+
+
+@db_connection
+def get_statistics(cursor=None):
+    query = '''
+            SELECT planet_id, COUNT(*) AS votes
+              FROM "planet-votes"
+              GROUP BY planet_id
+              ORDER BY planet_id;
+            '''
+    if cursor is None:
+        print('No database cursor.', file=sys.stderr)
+        raise psycopg2.DatabaseError()
+    cursor.execute(query)
+    return cursor.fetchall()
