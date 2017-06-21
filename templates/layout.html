@@ -12,11 +12,13 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
   </head>
   <body>
+    <section id="flash-wrapper">
     {% for message in get_flashed_messages() %}
       <div class="flashed-message bg-warning">
         <p class="text-danger">{{ message }}</p>
       </div>
     {% endfor %}
+    </section>
     <header>
       <a href="/"><h1 id="logo" class="pull-left"><b>SWP</b></h1></a>
       {% if session.user %}

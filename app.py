@@ -16,6 +16,7 @@ def format_planet_data(planet_data):
             planet['diameter'] = '{:,} km'.format(int(planet['diameter']))
         if planet.get('population') != 'unknown':
             planet['population'] = '{:,}'.format(int(planet['population']))
+        planet['id'] = planet.get('url').split('/')[-2]
 
 
 def construct_modal_data(planet, residents):
@@ -53,6 +54,25 @@ def get_modal_content():
         residents.append(requests.get(resident).json())
     data = construct_modal_data(planet, residents)
     return render_template('residents_modal.html', data=data)
+
+
+@app.route('/vote-for-planet')
+def vote_for_planet():
+    try:
+        user = db_access.get_user(session.get('user'))
+        db_access.add_vote(user.get('id'), int(request.args.get('pid')))
+        result = '''
+                    <div class="flashed-message bg-success">
+                        <p class="text-success">Successfully voted.</p>
+                    </div>
+                 '''
+    except (db_access.CredentialsMissingError, db_access.DatabaseError):
+        result = '''
+                    <div class="flashed-message bg-warning">
+                        <p class="text-danger">Vote unsuccessful.</p>
+                    </div>
+                 '''
+    return result
 
 
 @app.route('/login', methods=['GET', 'POST'])

@@ -36,6 +36,9 @@
       <th>Water</th>
       <th>Population</th>
       <th>Residents</th>
+      {% if session.user %}
+      <th>Vote</th>
+      {% endif %}
     </tr>
     {% for planet in data.results %}
     <tr>
@@ -62,6 +65,16 @@
         No known residents
         {% endif %}
       </td>
+      {% if session.user %}
+      <td>
+        <button
+          class="btn btn-default btn-block vote-btn"
+          type="button"
+          data-pid="{{ planet.id }}">
+          Vote
+        </button>
+      </td>
+      {% endif %}
     </tr>
     {% endfor %}
   </table>

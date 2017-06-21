@@ -57,6 +57,22 @@ function attachTableListeners() {
     $('#prev-page').click(pageButtonClick);
     $('#next-page').click(pageButtonClick);
     $('.residents-modal-activator').click(loadModalData);
+    $('.vote-btn').click(voteForPlanet);
+}
+
+function voteForPlanet() {
+    var button = $(this);
+    var pid = button.data('pid');
+    $.ajax({
+        url: `/vote-for-planet?pid=${pid}`,
+        success: function(result) {
+            $('#flash-wrapper').empty().append(result);
+            $('.flashed-message').slideDown(750).fadeIn(750);
+            setTimeout(function() {
+                $('.flashed-message').slideUp(750).fadeOut(750);
+            }, 2000);
+        }
+    });
 }
 
 function loadModalData(event) {

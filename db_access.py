@@ -1,5 +1,6 @@
 import os
 import sys
+import datetime
 import psycopg2
 from psycopg2.extras import DictCursor
 
@@ -69,3 +70,15 @@ def add_user(username, password, cursor=None):
         print('No database cursor.', file=sys.stderr)
         raise psycopg2.DatabaseError()
     cursor.execute(query, [username, password])
+
+
+@db_connection
+def add_vote(user_id, planet_id, cursor=None):
+    query = '''
+            INSERT INTO "planet-votes" (planet_id, user_id, submission_time)
+              VALUES (%s, %s, %s);
+            '''
+    if cursor is None:
+        print('No database cursor.', file=sys.stderr)
+        raise psycopg2.DatabaseError()
+    cursor.execute(query, [planet_id, user_id, datetime.datetime.now()])
