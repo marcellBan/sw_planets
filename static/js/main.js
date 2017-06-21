@@ -37,26 +37,30 @@ function initRegisterPage() {
         var username = $(this).val();
         $.ajax({
             url: `/check-user?username=${username}`,
-            success: function(response) {
-                if (response === "True") {
-                    $('#username').parents('.form-group').addClass('has-error');
-                    $('#username').parents('.form-group').removeClass('has-success');
-                } else {
-                    $('#username').parents('.form-group').addClass('has-success');
-                    $('#username').parents('.form-group').removeClass('has-error');
-                }
-            }
+            success: usernameValid
         });
     });
-    $('#password-verify').keyup(function() {
-        if ($(this).val() !== $('#password').val()) {
-            $(this).parents('.form-group').addClass('has-error');
-            $(this).parents('.form-group').removeClass('has-success');
-        } else {
-            $(this).parents('.form-group').addClass('has-success');
-            $(this).parents('.form-group').removeClass('has-error');
-        }
-    });
+    $('#password-verify').keyup(checkPasswords);
+}
+
+function checkPasswords() {
+    if ($('#password-verify').val() !== $('#password').val()) {
+        $('#password-verify').parents('.form-group').addClass('has-error');
+        $('#password-verify').parents('.form-group').removeClass('has-success');
+    } else {
+        $('#password-verify').parents('.form-group').addClass('has-success');
+        $('#password-verify').parents('.form-group').removeClass('has-error');
+    }
+}
+
+function usernameValid(response) {
+    if (response === "True") {
+        $('#username').parents('.form-group').addClass('has-error');
+        $('#username').parents('.form-group').removeClass('has-success');
+    } else {
+        $('#username').parents('.form-group').addClass('has-success');
+        $('#username').parents('.form-group').removeClass('has-error');
+    }
 }
 
 function attachTableListeners() {
