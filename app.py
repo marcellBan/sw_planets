@@ -8,7 +8,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import db_access
 
 app = Flask(__name__)
-app.secret_key = os.urandom(24)
+app.secret_key = b'i\x15\xdc[\x18A\x173!\xce\xad\x804^\xdf\x86\xff\x85\x14\x9f}\xa3\xe6\xc4'
 
 
 def format_planet_data(planet_data):
