@@ -2,7 +2,7 @@ import os
 import sys
 import datetime
 import psycopg2
-import urlparse
+import urllib
 from psycopg2.extras import DictCursor
 
 
@@ -15,7 +15,7 @@ def db_connection(function):
         _db_connection = None
         _cursor = None
         urlparse.uses_netloc.append('postgres')
-        url = urlparse.urlparse(os.environ.get('DATABASE_URL'))
+        url = urllib.parse(os.environ.get('DATABASE_URL'))
         try:
             _db_connection = conn = psycopg2.connect(
                 database=url.path[1:],
