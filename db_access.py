@@ -26,7 +26,8 @@ def db_connection(function):
                 user=url.username,
                 password=url.password,
                 host=url.hostname,
-                port=url.port
+                port=url.port,
+                cursor_factory=DictCursor
             )
             _db_connection.autocommit = True
             _cursor = _db_connection.cursor()
