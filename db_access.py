@@ -18,8 +18,8 @@ def db_connection(function):
     def wrapper(*args, **kwargs):
         _db_connection = None
         _cursor = None
-        urlparse.uses_netloc.append('postgres')
-        url = urllib.parse(os.environ.get('DATABASE_URL'))
+        urllib.parse.uses_netloc.append('postgres')
+        url = urllib.parse.urlparse(os.environ.get('DATABASE_URL'))
         try:
             _db_connection = conn = psycopg2.connect(
                 database=url.path[1:],
