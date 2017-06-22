@@ -6,6 +6,10 @@ import urllib
 from psycopg2.extras import DictCursor
 
 
+class CredentialsMissingError(Exception):
+    pass
+
+
 class DatabaseError(Exception):
     pass
 
