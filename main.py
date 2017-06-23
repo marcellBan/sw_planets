@@ -7,8 +7,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 import db_access
 
-app = Flask(__name__)
-app.secret_key = b'i\x15\xdc[\x18A\x173!\xce\xad\x804^\xdf\x86\xff\x85\x14\x9f}\xa3\xe6\xc4'
+fapp = Flask(__name__)
+fapp.secret_key = b'i\x15\xdc[\x18A\x173!\xce\xad\x804^\xdf\x86\xff\x85\x14\x9f}\xa3\xe6\xc4'
 
 
 def format_planet_data(planet_data):
@@ -38,22 +38,22 @@ def construct_statistics_data(data):
         planet['planet_id'] = requests.get(url).json().get('name')
 
 
-@app.route('/')
+@fapp.route('/')
 def index():
     planet_data = requests.get('http://swapi.co/api/planets').json()
     format_planet_data(planet_data)
-    parent_template = app.jinja_env.get_template('index.html')
+    parent_template = fapp.jinja_env.get_template('index.html')
     return render_template('planets_table.html', parent_template=parent_template, data=planet_data)
 
 
-@app.route('/get-table')
+@fapp.route('/get-table')
 def get_table():
     planet_data = requests.get(request.args.get('url')).json()
     format_planet_data(planet_data)
     return render_template('planets_table.html', data=planet_data)
 
 
-@app.route('/get-modal-content')
+@fapp.route('/get-modal-content')
 def get_modal_content():
     planet = requests.get(request.args.get('url')).json()
     residents = list()
@@ -63,7 +63,7 @@ def get_modal_content():
     return render_template('residents_modal.html', data=data)
 
 
-@app.route('/vote-for-planet')
+@fapp.route('/vote-for-planet')
 def vote_for_planet():
     try:
         user = db_access.get_user(session.get('user'))
@@ -82,7 +82,7 @@ def vote_for_planet():
     return result
 
 
-@app.route('/login', methods=['GET', 'POST'])
+@fapp.route('/login', methods=['GET', 'POST'])
 def login():
     success = False
     if session.get('user') is None:
@@ -110,7 +110,7 @@ def login():
         return render_template('login.html')
 
 
-@app.route('/register', methods=['GET', 'POST'])
+@fapp.route('/register', methods=['GET', 'POST'])
 def register():
     success = False
     if session.get('user') is None:
@@ -141,7 +141,7 @@ def register():
         return render_template('register.html')
 
 
-@app.route('/check-user')
+@fapp.route('/check-user')
 def check_user():
     try:
         user = db_access.get_user(request.args.get('username'))
@@ -150,7 +150,7 @@ def check_user():
         return str(False)
 
 
-@app.route('/get-statistics')
+@fapp.route('/get-statistics')
 def get_statistics():
     try:
         data = db_access.get_statistics()
@@ -160,26 +160,26 @@ def get_statistics():
         return '', 500
 
 
-@app.route('/logout')
+@fapp.route('/logout')
 def logout():
     if session.get('user') is not None:
         session.pop('user', None)
     return redirect(url_for('index'))
 
 
-@app.errorhandler(404)
+@fapp.errorhandler(404)
 def page_not_found(error):
     return render_template('404.html'), 404
 
 
-@app.errorhandler(405)
+@fapp.errorhandler(405)
 def bad_request(error):
     return render_template('405.html'), 405
 
 
-@app.errorhandler(500)
+@fapp.errorhandler(500)
 def internal_error(error):
     return render_template('500.html'), 500
 
 if __name__ == '__main__':
-    app.run()
+    fapp.run()
