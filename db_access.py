@@ -89,24 +89,24 @@ def add_user(username, password, cursor=None):
 
 
 @db_connection
-def add_vote(user_id, planet_id, cursor=None):
+def add_vote(user_id, planet_name, cursor=None):
     query = '''
-            INSERT INTO "planet-votes" (planet_id, user_id, submission_time)
+            INSERT INTO "planet-votes" (planet_name, user_id, submission_time)
               VALUES (%s, %s, %s);
             '''
     if cursor is None:
         print('No database cursor.', file=sys.stderr)
         raise psycopg2.DatabaseError()
-    cursor.execute(query, [planet_id, user_id, datetime.datetime.now()])
+    cursor.execute(query, [planet_name, user_id, datetime.datetime.now()])
 
 
 @db_connection
 def get_statistics(cursor=None):
     query = '''
-            SELECT planet_id, COUNT(*) AS votes
+            SELECT planet_name, COUNT(*) AS votes
               FROM "planet-votes"
-              GROUP BY planet_id
-              ORDER BY planet_id;
+              GROUP BY planet_name
+              ORDER BY planet_name;
             '''
     if cursor is None:
         print('No database cursor.', file=sys.stderr)

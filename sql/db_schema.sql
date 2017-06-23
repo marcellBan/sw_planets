@@ -9,7 +9,7 @@ CREATE TABLE users (
 
 CREATE TABLE "planet-votes" (
     id SERIAL PRIMARY KEY,
-    planet_id INTEGER,
+    planet_name TEXT,
     user_id INTEGER NOT NULL REFERENCES users(id),
     submission_time TIMESTAMP WITHOUT TIME ZONE
 );

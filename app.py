@@ -32,12 +32,6 @@ def construct_modal_data(planet, residents):
     return data
 
 
-def construct_statistics_data(data):
-    for planet in data:
-        url = 'http://swapi.co/api/planets/{}'.format(planet['planet_id'])
-        planet['planet_id'] = requests.get(url).json().get('name')
-
-
 @app.route('/')
 def index():
     planet_data = requests.get('http://swapi.co/api/planets').json()
@@ -67,7 +61,7 @@ def get_modal_content():
 def vote_for_planet():
     try:
         user = db_access.get_user(session.get('user'))
-        db_access.add_vote(user.get('id'), int(request.args.get('pid')))
+        db_access.add_vote(user.get('id'), request.args.get('pname'))
         result = '''
                     <div class="flashed-message bg-success">
                         <p class="text-success">Successfully voted.</p>
@@ -154,7 +148,6 @@ def check_user():
 def get_statistics():
     try:
         data = db_access.get_statistics()
-        construct_statistics_data(data)
         return json.dumps(data)
     except (db_access.CredentialsMissingError, db_access.DatabaseError):
         return '', 500

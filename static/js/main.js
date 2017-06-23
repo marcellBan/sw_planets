@@ -116,9 +116,9 @@ function generateRow(planet) {
 
 function voteForPlanet() {
     var button = $(this);
-    var pid = button.data('pid');
+    var pname = button.data('pname');
     $.ajax({
-        url: `/vote-for-planet?pid=${pid}`,
+        url: `/vote-for-planet?pname=${pname}`,
         success: function(result) {
             $('#flash-wrapper').empty().append(result);
             $('.flashed-message').slideDown(750).fadeIn(750);
