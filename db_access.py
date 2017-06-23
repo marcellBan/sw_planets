@@ -18,17 +18,35 @@ def db_connection(function):
     def wrapper(*args, **kwargs):
         _db_connection = None
         _cursor = None
-        urllib.parse.uses_netloc.append('postgres')
-        url = urllib.parse.urlparse(os.environ.get('DATABASE_URL'))
+        dev_env = os.environ.get('APP_ENV') == 'dev'
+        if dev_env:
+            connection_data = {
+                'dbname': os.environ.get('MY_PSQL_DBNAME'),
+                'user': os.environ.get('MY_PSQL_USER'),
+                'host': os.environ.get('MY_PSQL_HOST'),
+                'password': os.environ.get('MY_PSQL_PASSWORD')
+            }
+            # if environment values are missing raise exception
+            if any(map(lambda x: x is None, connection_data.values())):
+                print('Database credentials are missing!', file=sys.stderr)
+                raise CredentialsMissingError()
+            connect_string = "dbname='{dbname}' user='{user}' host='{host}' password='{password}'"
+            connect_string = connect_string.format(**connection_data)
+        else:
+            urllib.parse.uses_netloc.append('postgres')
+            url = urllib.parse.urlparse(os.environ.get('DATABASE_URL'))
         try:
-            _db_connection = conn = psycopg2.connect(
-                database=url.path[1:],
-                user=url.username,
-                password=url.password,
-                host=url.hostname,
-                port=url.port,
-                cursor_factory=DictCursor
-            )
+            if dev_env:
+                _db_connection = psycopg2.connect(connect_string, cursor_factory=DictCursor)
+            else:
+                _db_connection = psycopg2.connect(
+                    database=url.path[1:],
+                    user=url.username,
+                    password=url.password,
+                    host=url.hostname,
+                    port=url.port,
+                    cursor_factory=DictCursor
+                )
             _db_connection.autocommit = True
             _cursor = _db_connection.cursor()
             result = function(*args, **kwargs, cursor=_cursor)
